@@ -5,6 +5,8 @@ import numpy as np
 from random import choice
 from bidict import bidict
 from flask import Flask, render_template, request, redirect, url_for, session
+from PIL import Image, ImageOps
+from random import randint
 
 """
 ENCODER = bidict({
@@ -34,28 +36,36 @@ def add_data_get():
     message = session.get('message', '')
     letter = choice(list(ENCODER.keys()))
 
-    labels = np.load('data/geo_labels.npy')
-    count = {k:0 for k in ENCODER.keys()}
-    for label in labels:
-        count[label] += 1
-    count = sorted(count.items(), key=lambda x: x[1])
-    letter = count[0][0]
+    # labels = np.load('data/geo_labels.npy')
+    # count = {k:0 for k in ENCODER.keys()}
+    # for label in labels:
+    #     count[label] += 1
+    # count = sorted(count.items(), key=lambda x: x[1])
+    # letter = count[0][0]
 
     return render_template('addData.html', letter=letter, message=message)
 
 @app.route('/add-data', methods=['POST'])
 def add_data_post():
     label = request.form['letter']
-    labels = np.load('data/geo_labels.npy')
-    labels = np.append(labels, label)
-    np.save('data/geo_labels.npy', labels)
+    label = ENCODER[label]
+    # labels = np.load('data/geo_labels.npy')
+    # labels = np.append(labels, label)
+    # np.save('data/geo_labels.npy', labels)
 
     pixels = request.form['pixels']
     pixels = pixels.split(',')
-    img = np.array(pixels).astype(float).reshape(1, 50, 50)
-    imgs = np.load('data/geo_images.npy')
-    imgs = np.vstack([imgs, img])
-    np.save('data/geo_images.npy', imgs)
+    img = np.array(pixels).astype(np.uint8).reshape(50, 50)
+    image = Image.fromarray(img)
+
+    # Save the image as a PNG
+    parent = r"C:\Users\annch\OneDrive\Desktop\master\ხელნაწერები\board"
+    image = ImageOps.invert(image)
+    value = randint(0, 1000000000)
+    image.save(f"{parent}/{label}/{value}.png")
+    # imgs = np.load('data/geo_images.npy')
+    # imgs = np.vstack([imgs, img])
+    # np.save('data/geo_images.npy', imgs)
 
     session['message'] = f'"{label}" was added to the training dataset!'
     return redirect(url_for('add_data_get'))
@@ -73,7 +83,7 @@ def practice_post():
     pixels = pixels.split(",")
     img = np.array(pixels).astype(float).reshape(1, 50, 50, 1)
 
-    model = keras.models.load_model('scripts/geo_model.model')
+    model = keras.models.load_model('scripts/geo_model copy.model')
     pred_letter = np.argmax(model.predict(img), axis=-1)
     pred_letter = ENCODER.inverse[pred_letter[0]]
     correct = 'Yes' if pred_letter == letter else "No"
@@ -84,3 +94,4 @@ def practice_post():
 
 if __name__ == '__main__':
     app.run(debug=True)
+  
