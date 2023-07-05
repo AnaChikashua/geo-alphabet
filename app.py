@@ -7,6 +7,8 @@ from bidict import bidict
 from flask import Flask, render_template, request, redirect, url_for, session
 from PIL import Image, ImageOps
 from random import randint
+import cv2
+from ultralytics import YOLO
 
 """
 ENCODER = bidict({
@@ -26,8 +28,9 @@ ENCODER = bidict({
 })
 app = Flask(__name__)
 app.secret_key = 'quiz'
-@app.route('/')
+model = YOLO(r'C:\Users\annch\OneDrive\Desktop\master\ocr\runs\classify\train6\weights\best.pt')  # load a custom model
 
+@app.route('/')
 def index():
     return render_template('index.html')
     
@@ -81,11 +84,15 @@ def practice_post():
     letter = request.form['letter']
     pixels = request.form['pixels']
     pixels = pixels.split(",")
-    img = np.array(pixels).astype(float).reshape(1, 50, 50, 1)
-
-    model = keras.models.load_model('scripts/geo_model copy.model')
-    pred_letter = np.argmax(model.predict(img), axis=-1)
-    pred_letter = ENCODER.inverse[pred_letter[0]]
+    img = np.array(pixels).astype(np.uint8).reshape(50, 50, 1)
+    img = cv2.bitwise_not(cv2.cvtColor(img, cv2.COLOR_GRAY2RGB))     
+    # model = keras.models.load_model('scripts/geo_model.model')
+    # pred_letter = np.argmax(model.predict(img), axis=-1)
+    # pred_letter = ENCODER.inverse[pred_letter[0]]
+    results = model.predict(source=img)
+    names_dict = results[0].names
+    probs = results[0].probs.numpy()
+    pred_letter = ENCODER.inverse[int(names_dict[probs.top1])]
     correct = 'Yes' if pred_letter == letter else "No"
 
     letter = choice(list(ENCODER.keys()))
