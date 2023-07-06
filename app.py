@@ -1,5 +1,3 @@
-import h5py
-from tensorflow import keras
 
 import numpy as np
 from random import choice
@@ -28,58 +26,44 @@ app.secret_key = 'quiz'
 
 def index():
     return render_template('index.html')
+
+
+@app.route('/check_letter', methods=['POST'])
+def check_result():
+    type = request.form['type'] # ეს არის ტიპი რომელი გაიგზავნა ციფრი, ასო, თუ სიტყვა
+    f = request.files['file']
+    f.save('new.png')
     
-@app.route('/add-data', methods=['GET'])
-def add_data_get():
-    message = session.get('message', '')
-    letter = choice(list(ENCODER.keys()))
+    #model = keras.models.load_model('scripts/geo_model.model')
+    #result = np.argmax(model.predict(img), axis=-1)
+    result = "test"
 
-    labels = np.load('data/geo_labels.npy')
-    count = {k:0 for k in ENCODER.keys()}
-    for label in labels:
-        count[label] += 1
-    count = sorted(count.items(), key=lambda x: x[1])
-    letter = count[0][0]
-
-    return render_template('addData.html', letter=letter, message=message)
-
-@app.route('/add-data', methods=['POST'])
-def add_data_post():
-    label = request.form['letter']
-    labels = np.load('data/geo_labels.npy')
-    labels = np.append(labels, label)
-    np.save('data/geo_labels.npy', labels)
-
-    pixels = request.form['pixels']
-    pixels = pixels.split(',')
-    img = np.array(pixels).astype(float).reshape(1, 50, 50)
-    imgs = np.load('data/geo_images.npy')
-    imgs = np.vstack([imgs, img])
-    np.save('data/geo_images.npy', imgs)
-
-    session['message'] = f'"{label}" was added to the training dataset!'
-    return redirect(url_for('add_data_get'))
+    return render_template('index.html', result=result, type = type)
 
 
-@app.route('/practice', methods=['GET'])
-def practice_get():
-    letter = choice(list(ENCODER.keys()))
-    return render_template('practice.html', letter=letter, correct='')
+@app.route('/check_digit', methods=['POST'])
+def check_digit_result():
+    type = request.form['type'] # ეს არის ტიპი რომელი გაიგზავნა ციფრი, ასო, თუ სიტყვა
+    f = request.files['file']
+    f.save('new.png')
+        
+    #model = keras.models.load_model('scripts/geo_model.model')
+    #result = np.argmax(model.predict(img), axis=-1)
+    result = "test"
 
-@app.route('/practice', methods=['POST'])
-def practice_post():
-    letter = request.form['letter']
-    pixels = request.form['pixels']
-    pixels = pixels.split(",")
-    img = np.array(pixels).astype(float).reshape(1, 50, 50, 1)
+    return render_template('index.html', result=result, type = type)
 
-    model = keras.models.load_model('scripts/geo_model.model')
-    pred_letter = np.argmax(model.predict(img), axis=-1)
-    pred_letter = ENCODER.inverse[pred_letter[0]]
-    correct = 'Yes' if pred_letter == letter else "No"
 
-    letter = choice(list(ENCODER.keys()))
-    return render_template('practice.html', letter=letter, correct=correct, pred_letter = pred_letter)
+@app.route('/check_word', methods=['POST'])
+def check_word_result():
+    type = request.form['type'] # ეს არის ტიპი რომელი გაიგზავნა ციფრი, ასო, თუ სიტყვა
+    f = request.files['file']
+    f.save('new.png')
+    #model = keras.models.load_model('scripts/geo_model.model')
+    #result = np.argmax(model.predict(img), axis=-1)
+    result = "test"
+
+    return render_template('index.html', result = result, type = type)
 
 
 if __name__ == '__main__':

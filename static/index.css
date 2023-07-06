@@ -16,6 +16,8 @@ html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    min-height: 300px; 
+    margin-top: 35px;
 }
 
 .box p {
@@ -26,7 +28,17 @@ html {
     padding: 2rem 0 1rem 0;
 }
 
-#canvas {
+#letter_canvas {
+    background-color: white;
+    border: 1px solid gray;
+}
+
+#digit_canvas {
+    background-color: white;
+    border: 1px solid gray;
+}
+
+#word_canvas {
     background-color: white;
     border: 1px solid gray;
 }

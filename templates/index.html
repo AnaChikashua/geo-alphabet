@@ -1,18 +1,126 @@
 {% extends "base.html" %}
 {% block content %}
 
-  <div class="main-container">
-    <h1 class="title">alphabet quiz</h1>
-    <div>
-      <div class="box">
-        <a class="button is-info" href="/practice">practice</a>
-        <p>practice writing the alphabet</p>
-      </div>
-      <div class="box">
-        <a class="button is-info" href="/add-data">add data</a>
-        <p>improve the model by adding data</p>
-      </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <h1 class="title" style="margin: auto; color: #fff">Alphabet Quiz</h1>
+</nav>
+<div class="container" style="min-height: 700px">
+  <div class="row">
+    <div class="col-md-12">
+        <div class="box" id="box_word_canvas">
+          
+          <h1 class="title">Word</h1>
+          <div>
+            <canvas id="word_canvas" width="800" height="300"></canvas>
+          </div>
+          <div style="padding: 1rem;">
+            {% if type == 'word' %}
+              {% if result %}
+                <p style="font-size: 0.75rem;">{{result}}</p>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div>
+            <form enctype="multipart/form-data" id="pixels_word_canvas_form" action="check_word" method="POST" >
+              <input name="file" type="file" id="file_pixels_word_canvas" />
+              <input name="type" type="hidden" value="word" />
+              <button type="button" class="button is-success" id="practiceAction_word">Get Result</button>
+              <button type="button" class="button is-info" id="resetCanvas_word">Clear</button>
+            </form>
+          </div>
+
+        </div>
+    </div>
+
+
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+        <div class="box">
+        
+        <h1 class="title">Letter</h1>
+        <div>
+            <canvas id="letter_canvas" width="400" height="400"></canvas>
+        </div>
+        <div style="padding: 1rem;">
+          {% if type == 'letter' %}
+            {% if result %}
+              <p style="font-size: 0.75rem;">{{result}}</p>
+            {% endif %}
+          {% endif %}
+        </div>
+        <div>
+            <form enctype="multipart/form-data"  id="pixels_letter_canvas_form" action="check_letter" method="POST">
+            <input name="file" type="file" id="file_pixels_letter_canvas" />
+            <input name="type" type="hidden" value="letter" />
+            <button type="button" class="button is-success" id="practiceAction_letter">check my answer</button>
+            <button type="button" class="button is-info" id="resetCanvas_letter">clear</button>
+            </form>
+        </div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="box">
+        
+        <h1 class="title">Digit</h1>
+        <div>
+            <canvas id="digit_canvas" width="400" height="400"></canvas>
+        </div>
+        <div style="padding: 1rem;">
+          {% if type == 'digit' %}
+            {% if result %}
+              <p style="font-size: 0.75rem;">{{result}}</p>
+            {% endif %}
+          {% endif %}
+        </div>
+        <div>
+            <form enctype="multipart/form-data"  id="pixels_digit_canvas_form" action="check_digit" method="POST">
+            <input name="file" type="file" id="file_pixels_word_canvas" />
+            <input name="type" type="hidden" value="digit" />
+            <button type="button" class="button is-success" id="practiceAction_digit">check my answer</button>
+            <button type="button" class="button is-info" id="resetCanvas_digit">clear</button>
+            </form>
+        </div>
+
+        </div>
     </div>
   </div>
+
+</div>
+
+<script>
+  $(document).ready(function() {
+   // FOR LETTER
+   const letter_canvas = startCanvas("letter_canvas");
+   $("#resetCanvas_letter").click(() => {
+    letter_canvas.resetCanvas();
+   });
+   $("#practiceAction_letter").click(() => {
+    letter_canvas.practiceAction("pixels_letter_canvas", 'letter_canvas');
+   });
+   //END FOR LETTER
+
+   // FOR DIGIT
+   const digit_canvas = startCanvas("digit_canvas");
+   $("#resetCanvas_digit").click(() => {
+    digit_canvas.resetCanvas();
+   });
+   $("#practiceAction_digit").click(() => {
+    digit_canvas.practiceAction("pixels_digit_canvas", 'digit_canvas');
+   });
+   //END FOR DIGIT
+
+   // FOR WORD
+   const word_canvas = startCanvas("word_canvas");
+   $("#resetCanvas_word").click(() => {
+    word_canvas.resetCanvas();
+   });
+   $("#practiceAction_word").click(() => {
+    word_canvas.practiceAction("pixels_word_canvas", 'word_canvas');
+   });
+   //END FOR WORD
+ })
+</script>
 
 {% endblock %}
