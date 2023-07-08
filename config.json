@@ -1,0 +1,4 @@
+{
+  "YOLO_MODEL_PATH": "models/train6/weights/best.pt",
+  "DIGIT_MODEL_PATH":"models/digit_classification.h5"
+}

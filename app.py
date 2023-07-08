@@ -1,21 +1,18 @@
 import cv2
 import numpy as np
-from bidict import bidict
 from flask import Flask, render_template, request
 from ultralytics import YOLO
 from keras.models import load_model
 from split_word import split_word
+from config import ConstantConfig, ModelConfig
 
-model = YOLO('models/train6/weights/best.pt')
-dig_model = load_model('models/digit_classification.h5', compile=False)
+yolo_model_path = ModelConfig().yolo_model
+digit_model = ModelConfig().digit_model
+print(yolo_model_path)
+model = YOLO(yolo_model_path)
+dig_model = load_model(digit_model, compile=False)
 
-ENCODER = bidict({
-    'ა': 1, 'ბ': 2, 'გ': 3, 'დ': 4, 'ე': 5, 'ვ': 6,
-    'ზ': 7, 'თ': 8, 'ი': 9, 'კ': 10, 'ლ': 11, 'მ': 12,
-    'ნ': 13, 'ო': 14, 'პ': 15, 'ჟ': 16, 'რ': 17, 'ს': 18,
-    'ტ': 19, 'უ': 20, 'ფ': 21, 'ქ': 22, 'ღ': 23, 'ყ': 24,
-    'შ': 25, 'ჩ': 26, 'ც': 27, 'ძ': 28, 'წ': 29, 'ჭ': 30, 'ხ': 31, 'ჯ': 32, 'ჰ': 33
-})
+ENCODER = ConstantConfig().ENCODER
 app = Flask(__name__)
 app.secret_key = 'quiz'
 
@@ -60,7 +57,7 @@ def check_word_result():
     _type = request.form['type']
     img = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
-    chars = split_word(image=img, save_chars=True)
+    chars = split_word(image=img, save_chars=False)
     result = []
     for char in chars:
         predict_letter = yolo_prediction(char)
