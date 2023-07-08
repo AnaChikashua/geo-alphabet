@@ -17,6 +17,8 @@ Install the required dependencies:
 ```
 pip install -r requirements.txt
 ```
+Model weights are accessible on drive - 
+https://drive.google.com/drive/u/0/folders/1bP-CDykIdunX1qYvIwr0lL6ivbFB05cw
 
 Usage
 Start the Flask web server:
@@ -25,3 +27,4 @@ python app.py
 ```
 Contributions
 Contributions are welcome! If you encounter any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request.
+
