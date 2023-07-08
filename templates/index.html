@@ -1,183 +1,188 @@
 {% extends "base.html" %}
 {% block content %}
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <h1 class="title" style="margin: auto; color: #fff">Alphabet Quiz</h1>
-</nav>
-<div class="container" style="min-height: 700px">
-  <div class="row">
-    <div class="col-md-12">
-        <div class="box" id="box_word_canvas">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <h1 class="title" style="margin: auto; color: #fff">Alphabet Quiz</h1>
+    </nav>
+    <div class="container" style="min-height: 700px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box" id="box_word_canvas">
 
-          <h1 class="title">Word</h1>
-          <div>
-            <canvas id="word_canvas" width="800" height="300"></canvas>
-          </div>
-          <div style="padding: 1rem;">
-            <p style="font-size: 0.75rem;" id="word_result"></p>
-          </div>
-          <div>
-            <form enctype="multipart/form-data" id="pixels_word_canvas_form" action="check_word" method="POST" >
-              <input name="file" type="file" id="file_pixels_word_canvas" style="display: none;"/>
-              <input name="type" type="hidden" value="word" />
-              <button type="button" class="button is-success" id="practiceAction_word">Get Result</button>
-              <button type="button" class="button is-info" id="resetCanvas_word">Clear</button>
-            </form>
-          </div>
+                    <h1 class="title">Word</h1>
+                    <div>
+                        <canvas id="word_canvas" width="800" height="300"></canvas>
+                    </div>
+                    <div style="padding: 1rem;">
+                        <p style="font-size: 0.75rem;" id="word_result"></p>
+                    </div>
+                    <div>
+                        <form enctype="multipart/form-data" id="pixels_word_canvas_form" action="check_word"
+                              method="POST">
+                            <input name="file" type="file" id="file_pixels_word_canvas" style="display: none;"/>
+                            <input name="type" type="hidden" value="word"/>
+                            <button type="button" class="button is-success" id="practiceAction_word">Get Result</button>
+                            <button type="button" class="button is-info" id="resetCanvas_word">Clear</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
 
         </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box">
+
+                    <h1 class="title">Letter</h1>
+                    <div>
+                        <canvas id="letter_canvas" width="400" height="400"></canvas>
+                    </div>
+                    <div style="padding: 1rem;">
+                        <p style="font-size: 0.75rem;" id="letter_result"></p>
+                    </div>
+                    <div>
+                        <form enctype="multipart/form-data" id="pixels_letter_canvas_form" action="check_letter"
+                              method="POST">
+                            <input name="file" type="file" id="file_pixels_letter_canvas" style="display: none;"/>
+                            <input name="type" type="hidden" id="type_letter_canvas" value="letter"/>
+                            <button type="button" class="button is-success" id="practiceAction_letter">check my answer
+                            </button>
+                            <button type="button" class="button is-info" id="resetCanvas_letter">clear</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box">
+
+                    <h1 class="title">Digit</h1>
+                    <div>
+                        <canvas id="digit_canvas" width="200" height="200"></canvas>
+                    </div>
+                    <div style="padding: 1rem;">
+                        <p style="font-size: 0.75rem;" id="digit_result"></p>
+                    </div>
+                    <div>
+                        <form enctype="multipart/form-data" id="pixels_digit_canvas_form" action="check_digit"
+                              method="POST">
+                            <input name="file" type="file" id="file_pixels_digit_canvas" style="display: none;"/>
+                            <input name="type" type="hidden" value="digit"/>
+                            <button type="button" class="button is-success" id="practiceAction_digit">check my answer
+                            </button>
+                            <button type="button" class="button is-info" id="resetCanvas_digit">clear</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 
+    <script>
+        $(document).ready(function () {
+            // FOR LETTER
+            const letter_canvas = startCanvas("letter_canvas");
+            $("#resetCanvas_letter").click(() => {
+                letter_canvas.resetCanvas();
+            });
+            $("#practiceAction_letter").click(() => {
+                const canvas = document.getElementById('letter_canvas');
+                canvas.toBlob((blob) => {
+                    const file = new File([blob], "mycanvas.png");
+                    const dT = new DataTransfer();
+                    dT.items.add(file);
+                    document.getElementById("file_pixels_letter_canvas").files = dT.files;
 
-  </div>
-  <div class="row">
-    <div class="col-md-6">
-        <div class="box">
+                    var formData = new FormData();
+                    //formData.append('file', dT.files);
+                    formData.append('file', $('#file_pixels_letter_canvas')[0].files[0]);
 
-        <h1 class="title">Letter</h1>
-        <div>
-            <canvas id="letter_canvas" width="400" height="400"></canvas>
-        </div>
-        <div style="padding: 1rem;">
-              <p style="font-size: 0.75rem;" id="letter_result"></p>
-        </div>
-        <div>
-            <form enctype="multipart/form-data"  id="pixels_letter_canvas_form" action="check_letter" method="POST">
-            <input name="file" type="file" id="file_pixels_letter_canvas" style="display: none;"/>
-            <input name="type" type="hidden" id="type_letter_canvas"  value="letter" />
-            <button type="button" class="button is-success" id="practiceAction_letter">check my answer</button>
-            <button type="button" class="button is-info" id="resetCanvas_letter">clear</button>
-            </form>
-        </div>
+                    $.ajax({
+                        url: 'http://127.0.0.1:5000/check_letter',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,  // tell jQuery not to process the data
+                        contentType: false,  // tell jQuery not to set contentType
+                        success: function (data) {
+                            if (data.result) {
+                                $("#letter_result").html(data.result);
+                            }
+                        }
+                    });
+                });
+            });
+            //END FOR LETTER
 
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="box">
+            // FOR DIGIT
+            const digit_canvas = startCanvas("digit_canvas");
+            $("#resetCanvas_digit").click(() => {
+                digit_canvas.resetCanvas();
+            });
+            $("#practiceAction_digit").click(() => {
+                const canvas = document.getElementById('digit_canvas');
+                canvas.toBlob((blob) => {
+                    const file = new File([blob], "mycanvas.png");
+                    const dT = new DataTransfer();
+                    dT.items.add(file);
+                    document.getElementById("file_pixels_digit_canvas").files = dT.files;
 
-        <h1 class="title">Digit</h1>
-        <div>
-            <canvas id="digit_canvas" width="200" height="200"></canvas>
-        </div>
-        <div style="padding: 1rem;">
-              <p style="font-size: 0.75rem;" id="digit_result"></p>
-        </div>
-        <div>
-            <form enctype="multipart/form-data"  id="pixels_digit_canvas_form" action="check_digit" method="POST">
-            <input name="file" type="file" id="file_pixels_digit_canvas" style="display: none;"/>
-            <input name="type" type="hidden" value="digit" />
-            <button type="button" class="button is-success" id="practiceAction_digit">check my answer</button>
-            <button type="button" class="button is-info" id="resetCanvas_digit">clear</button>
-            </form>
-        </div>
+                    var formData = new FormData();
+                    //formData.append('file', dT.files);
+                    formData.append('file', $('#file_pixels_digit_canvas')[0].files[0]);
 
-        </div>
-    </div>
-  </div>
+                    $.ajax({
+                        url: 'http://127.0.0.1:5000/check_digit',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,  // tell jQuery not to process the data
+                        contentType: false,  // tell jQuery not to set contentType
+                        success: function (data) {
+                            if (data.result) {
+                                $("#digit_result").html(data.result);
+                            }
+                        }
+                    });
+                });
+            });
+            //END FOR DIGIT
 
-</div>
+            // FOR WORD
+            const word_canvas = startCanvas("word_canvas");
+            $("#resetCanvas_word").click(() => {
+                word_canvas.resetCanvas();
+            });
+            $("#practiceAction_word").click(() => {
+                const canvas = document.getElementById('word_canvas');
+                canvas.toBlob((blob) => {
+                    const file = new File([blob], "mycanvas.png");
+                    const dT = new DataTransfer();
+                    dT.items.add(file);
+                    document.getElementById("file_pixels_word_canvas").files = dT.files;
 
-<script>
-  $(document).ready(function() {
-   // FOR LETTER
-   const letter_canvas = startCanvas("letter_canvas");
-   $("#resetCanvas_letter").click(() => {
-    letter_canvas.resetCanvas();
-   });
-   $("#practiceAction_letter").click(() => {
-    const canvas = document.getElementById('letter_canvas');
-    canvas.toBlob((blob) => {
-        const file = new File([blob], "mycanvas.png");
-        const dT = new DataTransfer();
-        dT.items.add(file);
-        document.getElementById("file_pixels_letter_canvas").files = dT.files;
+                    var formData = new FormData();
+                    //formData.append('file', dT.files);
+                    formData.append('file', $('#file_pixels_word_canvas')[0].files[0]);
 
-        var formData = new FormData();
-        //formData.append('file', dT.files);
-        formData.append('file', $('#file_pixels_letter_canvas')[0].files[0]);
-
-        $.ajax({
-              url : 'http://127.0.0.1:5000/check_letter',
-              type : 'POST',
-              data : formData,
-              processData: false,  // tell jQuery not to process the data
-              contentType: false,  // tell jQuery not to set contentType
-              success : function(data) {
-                  if(data.result){
-                    $("#letter_result").html(data.result);
-                  }
-              }
-        });
-    });
-   });
-   //END FOR LETTER
-
-   // FOR DIGIT
-   const digit_canvas = startCanvas("digit_canvas");
-   $("#resetCanvas_digit").click(() => {
-    digit_canvas.resetCanvas();
-   });
-   $("#practiceAction_digit").click(() => {
-    const canvas = document.getElementById('digit_canvas');
-    canvas.toBlob((blob) => {
-        const file = new File([blob], "mycanvas.png");
-        const dT = new DataTransfer();
-        dT.items.add(file);
-        document.getElementById("file_pixels_digit_canvas").files = dT.files;
-
-        var formData = new FormData();
-        //formData.append('file', dT.files);
-        formData.append('file', $('#file_pixels_digit_canvas')[0].files[0]);
-
-        $.ajax({
-              url : 'http://127.0.0.1:5000/check_digit',
-              type : 'POST',
-              data : formData,
-              processData: false,  // tell jQuery not to process the data
-              contentType: false,  // tell jQuery not to set contentType
-              success : function(data) {
-                  if(data.result){
-                    $("#digit_result").html(data.result);
-                  }
-              }
-        });
-    });
-   });
-   //END FOR DIGIT
-
-   // FOR WORD
-   const word_canvas = startCanvas("word_canvas");
-   $("#resetCanvas_word").click(() => {
-    word_canvas.resetCanvas();
-   });
-   $("#practiceAction_word").click(() => {
-    const canvas = document.getElementById('word_canvas');
-    canvas.toBlob((blob) => {
-        const file = new File([blob], "mycanvas.png");
-        const dT = new DataTransfer();
-        dT.items.add(file);
-        document.getElementById("file_pixels_word_canvas").files = dT.files;
-
-        var formData = new FormData();
-        //formData.append('file', dT.files);
-        formData.append('file', $('#file_pixels_word_canvas')[0].files[0]);
-
-        $.ajax({
-              url : 'http://127.0.0.1:5000//check_word',
-              type : 'POST',
-              data : formData,
-              processData: false,  // tell jQuery not to process the data
-              contentType: false,  // tell jQuery not to set contentType
-              success : function(data) {
-                  if(data.result){
-                    $("#word_result").html(data.result);
-                  }
-              }
-        });
-    });
-   });
-   //END FOR WORD
- })
-</script>
+                    $.ajax({
+                        url: 'http://127.0.0.1:5000//check_word',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,  // tell jQuery not to process the data
+                        contentType: false,  // tell jQuery not to set contentType
+                        success: function (data) {
+                            if (data.result) {
+                                $("#word_result").html(data.result);
+                            }
+                        }
+                    });
+                });
+            });
+            //END FOR WORD
+        })
+    </script>
 
 {% endblock %}
