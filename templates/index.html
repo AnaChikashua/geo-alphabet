@@ -14,11 +14,7 @@
             <canvas id="word_canvas" width="800" height="300"></canvas>
           </div>
           <div style="padding: 1rem;">
-            {% if type == 'word' %}
-              {% if result %}
-                <p style="font-size: 0.75rem;">{{result}}</p>
-              {% endif %}
-            {% endif %}
+            <p style="font-size: 0.75rem;" id="word_result"></p>
           </div>
           <div>
             <form enctype="multipart/form-data" id="pixels_word_canvas_form" action="check_word" method="POST" >
@@ -43,17 +39,13 @@
             <canvas id="letter_canvas" width="400" height="400"></canvas>
         </div>
         <div style="padding: 1rem;">
-          {% if type == 'letter' %}
-            {% if result %}
-              <p style="font-size: 0.75rem;">{{result}}</p>
-            {% endif %}
-          {% endif %}
+              <p style="font-size: 0.75rem;" id="letter_result"></p>
         </div>
         <div>
             <form enctype="multipart/form-data"  id="pixels_letter_canvas_form" action="check_letter" method="POST">
             <input name="file" type="file" id="file_pixels_letter_canvas" style="display: none;"/>
             <input name="type" type="hidden" id="type_letter_canvas"  value="letter" />
-            <button type="button" class="button is-success" id="practiceAction_letter" onclick="performPost()">check my answer</button>
+            <button type="button" class="button is-success" id="practiceAction_letter">check my answer</button>
             <button type="button" class="button is-info" id="resetCanvas_letter">clear</button>
             </form>
         </div>
@@ -68,9 +60,7 @@
             <canvas id="digit_canvas" width="200" height="200"></canvas>
         </div>
         <div style="padding: 1rem;">
-          {% if type == 'digit' %}
-              <p style="font-size: 0.75rem;">{{result}}</p>
-          {% endif %}
+              <p style="font-size: 0.75rem;" id="digit_result"></p>
         </div>
         <div>
             <form enctype="multipart/form-data"  id="pixels_digit_canvas_form" action="check_digit" method="POST">
@@ -95,7 +85,30 @@
     letter_canvas.resetCanvas();
    });
    $("#practiceAction_letter").click(() => {
-    letter_canvas.practiceAction("pixels_letter_canvas", 'letter_canvas');
+    const canvas = document.getElementById('letter_canvas');
+    canvas.toBlob((blob) => {
+        const file = new File([blob], "mycanvas.png");
+        const dT = new DataTransfer();
+        dT.items.add(file);
+        document.getElementById("file_pixels_letter_canvas").files = dT.files;
+
+        var formData = new FormData();
+        //formData.append('file', dT.files);
+        formData.append('file', $('#file_pixels_letter_canvas')[0].files[0]);
+
+        $.ajax({
+              url : 'http://127.0.0.1:5000/check_letter',
+              type : 'POST',
+              data : formData,
+              processData: false,  // tell jQuery not to process the data
+              contentType: false,  // tell jQuery not to set contentType
+              success : function(data) {
+                  if(data.result){
+                    $("#letter_result").html(data.result);
+                  }
+              }
+        });
+    });
    });
    //END FOR LETTER
 
@@ -105,7 +118,30 @@
     digit_canvas.resetCanvas();
    });
    $("#practiceAction_digit").click(() => {
-    digit_canvas.practiceAction("pixels_digit_canvas", 'digit_canvas');
+    const canvas = document.getElementById('digit_canvas');
+    canvas.toBlob((blob) => {
+        const file = new File([blob], "mycanvas.png");
+        const dT = new DataTransfer();
+        dT.items.add(file);
+        document.getElementById("file_pixels_digit_canvas").files = dT.files;
+
+        var formData = new FormData();
+        //formData.append('file', dT.files);
+        formData.append('file', $('#file_pixels_digit_canvas')[0].files[0]);
+
+        $.ajax({
+              url : 'http://127.0.0.1:5000/check_digit',
+              type : 'POST',
+              data : formData,
+              processData: false,  // tell jQuery not to process the data
+              contentType: false,  // tell jQuery not to set contentType
+              success : function(data) {
+                  if(data.result){
+                    $("#digit_result").html(data.result);
+                  }
+              }
+        });
+    });
    });
    //END FOR DIGIT
 
@@ -115,7 +151,30 @@
     word_canvas.resetCanvas();
    });
    $("#practiceAction_word").click(() => {
-    word_canvas.practiceAction("pixels_word_canvas", 'word_canvas');
+    const canvas = document.getElementById('word_canvas');
+    canvas.toBlob((blob) => {
+        const file = new File([blob], "mycanvas.png");
+        const dT = new DataTransfer();
+        dT.items.add(file);
+        document.getElementById("file_pixels_word_canvas").files = dT.files;
+
+        var formData = new FormData();
+        //formData.append('file', dT.files);
+        formData.append('file', $('#file_pixels_word_canvas')[0].files[0]);
+
+        $.ajax({
+              url : 'http://127.0.0.1:5000//check_word',
+              type : 'POST',
+              data : formData,
+              processData: false,  // tell jQuery not to process the data
+              contentType: false,  // tell jQuery not to set contentType
+              success : function(data) {
+                  if(data.result){
+                    $("#word_result").html(data.result);
+                  }
+              }
+        });
+    });
    });
    //END FOR WORD
  })

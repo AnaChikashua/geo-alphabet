@@ -31,37 +31,34 @@ def yolo_prediction(img):
 
 @app.route('/check_letter', methods=['POST'])
 def check_result():
-    _type = request.form['type']
     img = cv2.imdecode(np.frombuffer(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
     pred_letter = yolo_prediction(img)
-    return render_template('index.html', result=pred_letter, type=_type)
+    return {"result": ''.join(pred_letter)}
 
 
 @app.route('/check_digit', methods=['POST'])
 def check_digit_result():
-    _type = request.form['type']
-    img = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
+    img = cv2.imdecode(np.frombuffer(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2GRAY)
     img = cv2.bitwise_not(img)
     img = cv2.resize(img, (28, 28), interpolation=cv2.INTER_NEAREST)
     img = img.reshape(1, 28, 28, 1)
     predict_value = dig_model.predict(img)
-    result = np.argmax(predict_value)
-    return render_template('index.html', result=result, type=_type)
+    result = np.argmax(predict_value[0])
+    return {"result": str(result)}
 
 
 @app.route('/check_word', methods=['POST'])
 def check_word_result():
-    _type = request.form['type']
-    img = cv2.imdecode(np.fromstring(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
+    img = cv2.imdecode(np.frombuffer(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
     chars = split_word(image=img, save_chars=False)
     result = []
     for char in chars:
         predict_letter = yolo_prediction(char)
         result.append(predict_letter)
-    return render_template('index.html', result=''.join(result), type=_type)
+    return {"result": ''.join(result)}
 
 
 if __name__ == '__main__':
