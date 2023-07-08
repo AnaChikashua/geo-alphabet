@@ -8,7 +8,6 @@ from config import ConstantConfig, ModelConfig
 
 yolo_model_path = ModelConfig().yolo_model
 digit_model = ModelConfig().digit_model
-print(yolo_model_path)
 model = YOLO(yolo_model_path)
 dig_model = load_model(digit_model, compile=False)
 
