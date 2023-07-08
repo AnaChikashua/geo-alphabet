@@ -8,7 +8,7 @@
   <div class="row">
     <div class="col-md-12">
         <div class="box" id="box_word_canvas">
-          
+
           <h1 class="title">Word</h1>
           <div>
             <canvas id="word_canvas" width="800" height="300"></canvas>
@@ -22,7 +22,7 @@
           </div>
           <div>
             <form enctype="multipart/form-data" id="pixels_word_canvas_form" action="check_word" method="POST" >
-              <input name="file" type="file" id="file_pixels_word_canvas" />
+              <input name="file" type="file" id="file_pixels_word_canvas" style="display: none;"/>
               <input name="type" type="hidden" value="word" />
               <button type="button" class="button is-success" id="practiceAction_word">Get Result</button>
               <button type="button" class="button is-info" id="resetCanvas_word">Clear</button>
@@ -37,7 +37,7 @@
   <div class="row">
     <div class="col-md-6">
         <div class="box">
-        
+
         <h1 class="title">Letter</h1>
         <div>
             <canvas id="letter_canvas" width="400" height="400"></canvas>
@@ -51,9 +51,9 @@
         </div>
         <div>
             <form enctype="multipart/form-data"  id="pixels_letter_canvas_form" action="check_letter" method="POST">
-            <input name="file" type="file" id="file_pixels_letter_canvas" />
-            <input name="type" type="hidden" value="letter" />
-            <button type="button" class="button is-success" id="practiceAction_letter">check my answer</button>
+            <input name="file" type="file" id="file_pixels_letter_canvas" style="display: none;"/>
+            <input name="type" type="hidden" id="type_letter_canvas"  value="letter" />
+            <button type="button" class="button is-success" id="practiceAction_letter" onclick="performPost()">check my answer</button>
             <button type="button" class="button is-info" id="resetCanvas_letter">clear</button>
             </form>
         </div>
@@ -62,21 +62,19 @@
     </div>
     <div class="col-md-6">
         <div class="box">
-        
+
         <h1 class="title">Digit</h1>
         <div>
-            <canvas id="digit_canvas" width="400" height="400"></canvas>
+            <canvas id="digit_canvas" width="200" height="200"></canvas>
         </div>
         <div style="padding: 1rem;">
           {% if type == 'digit' %}
-            {% if result %}
               <p style="font-size: 0.75rem;">{{result}}</p>
-            {% endif %}
           {% endif %}
         </div>
         <div>
             <form enctype="multipart/form-data"  id="pixels_digit_canvas_form" action="check_digit" method="POST">
-            <input name="file" type="file" id="file_pixels_word_canvas" />
+            <input name="file" type="file" id="file_pixels_digit_canvas" style="display: none;"/>
             <input name="type" type="hidden" value="digit" />
             <button type="button" class="button is-success" id="practiceAction_digit">check my answer</button>
             <button type="button" class="button is-info" id="resetCanvas_digit">clear</button>
