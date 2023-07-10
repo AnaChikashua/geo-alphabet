@@ -22,6 +22,7 @@ def index():
 
 
 def yolo_prediction(img):
+    """ფუნქცია ამოიცნობს სიმბოლოს წინასწარ გაწვრთნილი Yolov8 მოდელით"""
     results = model.predict(source=img)
     names_dict = results[0].names
     probs = results[0].probs.numpy()
