@@ -3,6 +3,7 @@ from imutils import contours
 
 
 def split_word(file_name=None, image=None, save_chars=False):
+    """ფუნქცია შემავალ სიტყვას შლის სიმბოლოებად"""
     if not file_name and image is None: return
     if image is None:
         image = cv2.imread(f'{file_name}')

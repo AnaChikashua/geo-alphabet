@@ -31,6 +31,7 @@ def yolo_prediction(img):
 
 @app.route('/check_letter', methods=['POST'])
 def check_result():
+    """სიმბოლოს ამოცნობა"""
     img = cv2.imdecode(np.frombuffer(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
     pred_letter = yolo_prediction(img)
@@ -39,6 +40,7 @@ def check_result():
 
 @app.route('/check_digit', methods=['POST'])
 def check_digit_result():
+    """რიცხვის ამოცნობა"""
     img = cv2.imdecode(np.frombuffer(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2GRAY)
     img = cv2.bitwise_not(img)
@@ -51,6 +53,7 @@ def check_digit_result():
 
 @app.route('/check_word', methods=['POST'])
 def check_word_result():
+    """სიტყვის ამოცნობა"""
     img = cv2.imdecode(np.frombuffer(request.files['file'].read(), np.uint8), cv2.IMREAD_UNCHANGED)
     img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
     chars = split_word(image=img, save_chars=False)
